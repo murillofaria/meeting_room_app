@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -111,7 +112,9 @@ def reunioes(request):
 @login_required
 def criar_reuniao(request):
     usuarios = User.objects.all()
-    salas = Sala.objects.all()
+    salas = Sala.objects.filter(
+        ocupada=False
+    )
     reuniao_status = Reuniao.STATUS_CHOICES
     if request.method == "GET":
         return render(request, 'reuniao.html', {'usuarios':usuarios, "salas":salas, "reuniao_status":reuniao_status})
@@ -153,7 +156,9 @@ def criar_reuniao(request):
 @login_required
 def alterar_reuniao(request, id):
     usuarios = User.objects.all()
-    salas = Sala.objects.all()
+    salas = Sala.objects.filter(
+        ocupada=False
+    )
     reuniao_status = Reuniao.STATUS_CHOICES
 
     reuniao_obj = Reuniao.objects.get(id=id)
@@ -205,3 +210,26 @@ def excluir_reuniao(request, id):
         return redirect('reunioes')
     
     return redirect('reunioes') #Caso tente entrar por GET, vai para tela de reunioes
+
+@login_required
+def criar_sala(request):
+    if request.method == "GET":
+        return render(request, "sala.html")
+    elif request.method == "POST":
+        nome_form = request.POST.get('nome', '').strip()
+        capacidade_form = request.POST.get('capacidade', '').strip()
+        localizacao_form = request.POST.get('localizacao', '').strip()
+        ocupada_form = request.POST.get('ocupada')
+
+        if not nome_form or not capacidade_form or not localizacao_form:
+            messages.error(request, "Preencha todos os campos corretamente.")
+            return redirect('criar_sala')
+
+        nova_sala = Sala.objects.create(
+            nome=nome_form,
+            capacidade=capacidade_form,
+            localizacao=localizacao_form,
+            ocupada=ocupada_form
+        )
+
+        return redirect('reunioes')

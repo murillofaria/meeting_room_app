@@ -48,7 +48,7 @@
             </div>
             <div class="card mx-3 shadow-sm border-0 border-start border-success border-4" style="width: 180px">
                 <div class="card-body text-center">
-                    <h2 class="fw-bold mb-0">{{ contexto.total_salas }}</h2>
+                    <h2 class="fw-bold mb-0">{{ contexto.salas_disponiveis }}</h2>
                     <small class="text-uppercase fw-semibold text-muted">Salas Disponíveis</small>
                 </div>
             </div>
@@ -68,6 +68,15 @@
                     <span class="fw-bold">Registrar Sala</span>
                 </a>
             </div>
+
+            {% if contexto.tot_salas >= 1 %}
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <a href="{% url 'salas' %}" class="btn btn-dark btn-lg w-100 py-3 shadow-sm d-flex flex-column align-items-center justify-content-center">
+                        <i class="bi bi-door-open-fill"></i>
+                        <span class="fw-bold">Configurar Salas</span>
+                    </a>
+                </div>
+            {% endif %}
         </div>
 
         <div class="row">

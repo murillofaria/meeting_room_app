@@ -13,32 +13,34 @@
         <div class="row shadow-lg rounded-4 border-light p-4" style="background-color: #eff6ff">
             <h2 class="fw-bold text-dark mb-3">Sala <i class="bi bi-info-square-fill"></i></h2>
 
-            <form action="{% url 'criar_sala' %}" method="POST">
+            <form action="{%if sala_obj %}{% url 'alterar_sala' sala_obj.id %}{% else %}{% url 'criar_sala' %}{% endif %}" method="POST">
                 {% csrf_token %}
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" name="nome" id="nome" placeholder="Digite o título da reunião">
+                            <input value="{{sala_obj.nome}}" type="text" class="form-control" name="nome" id="nome" placeholder="Digite o título da reunião">
                         </div>
                         <div class="mb-3">
                             <label for="capacidade" class="form-label">Capacidade de pessoas</label>
-                            <input type="number" class="form-control" name="capacidade" id="capacidade" placeholder="Digite a cap. de pessoas">
+                            <input value="{{sala_obj.capacidade}}" type="number" class="form-control" name="capacidade" id="capacidade" placeholder="Digite a cap. de pessoas">
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label for="localizacao" class="form-label">Localização da sala</label>
-                            <input type="text" class="form-control" name="localizacao" id="localizacao" placeholder="Digite o local da sala">
+                            <input value="{{sala_obj.localizacao}}" type="text" class="form-control" name="localizacao" id="localizacao" placeholder="Digite o local da sala">
                         </div>
                         <div class="mb-3 d-flex flex-column">
                             <label for="ocupada" class="form-label">A sala está ocupada?</label>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input shadow" type="radio" name="ocupada" id="ocupada_nao" value="0" checked>
+                                <input class="form-check-input shadow" type="radio" name="ocupada" id="ocupada_nao" value="0"
+                                {% if not sala_obj.ocupada %}checked{%endif%}>
                                 <label class="form-check-label" for="ocupada_nao">Não</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input shadow" type="radio" name="ocupada" id="ocupada_sim" value="1">
+                                <input class="form-check-input shadow" type="radio" name="ocupada" id="ocupada_sim" value="1"
+                                {% if sala_obj.ocupada %}checked{%endif%}>
                                 <label class="form-check-label" for="ocupada_sim">Sim</label>
                             </div>
                         </div>

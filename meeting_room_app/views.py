@@ -90,13 +90,15 @@ def reunioes(request):
 
     reunioes_hoje = reunioes_hoje.distinct().order_by('hora_inicio') # Removendo duplicatas
 
-    total_salas = Sala.objects.filter(ocupada=False).count()
+    salas_disponiveis = Sala.objects.filter(ocupada=False).count()
+    tot_salas = Sala.objects.count()
 
     contexto = {
         'organizando': organizando,
         'participando': participando,
         'reunioes_hoje': reunioes_hoje,
-        'total_salas': total_salas
+        'salas_disponiveis': salas_disponiveis,
+        'tot_salas': tot_salas
     }
 
     reunioes = Reuniao.objects.filter( # Mostrar reuniões onde o usuário é participante ou organizador
@@ -129,6 +131,14 @@ def criar_reuniao(request):
         status_form = request.POST.get('status', '').strip()
 
         participantes_form = request.POST.getlist('participante')
+
+        total_participantes = len(participantes_form)
+        sala_escolhida = Sala.objects.get(id=sala_form)
+        capacidade_sala = int(sala_escolhida.capacidade)
+
+        if total_participantes > capacidade_sala:
+            messages.error(request, f"A sala {sala_escolhida.nome} suporta no máximo {capacidade_sala} pessoa(s). Você selecionou {total_participantes} pessoa(s).")
+            return redirect('criar_reuniao')
 
         if not titulo_form or not organizador_form or not sala_form or not data_form or not hr_ini_form or not hr_fim_form or not participantes_form or not status_form:
             messages.error(request, "Preencha todos os campos corretamente.")
@@ -179,7 +189,7 @@ def alterar_reuniao(request, id):
 
         if not titulo_form or not organizador_form or not sala_form or not data_form or not hr_ini_form or not hr_fim_form or not participantes_form or not status_form:
             messages.error(request, "Preencha todos os campos corretamente.")
-            return redirect('criar_reuniao')
+            return redirect('alterar_reuniao', id=reuniao_obj.id)
 
         organizador_obj = User.objects.get(id=organizador_form)
         sala_obj = Sala.objects.get(id=sala_form)
@@ -233,3 +243,40 @@ def criar_sala(request):
         )
 
         return redirect('reunioes')
+    
+@login_required
+def salas(request):
+    if request.method == "GET":
+        salas = Sala.objects.all()
+        return render(request, 'salas.html', {"salas": salas})
+
+@login_required
+def alterar_sala(request, id):
+    sala_obj = Sala.objects.get(id=id)
+    if request.method == "GET":
+        return render(request, 'sala.html', {"sala_obj": sala_obj})
+    elif request.method == "POST":
+        nome_form = request.POST.get('nome', '').strip()
+        capacidade_form = request.POST.get('capacidade', '').strip()
+        localizacao_form = request.POST.get('localizacao', '').strip()
+        ocupada_form = request.POST.get('ocupada')
+
+        if not nome_form or not capacidade_form or not localizacao_form:
+            messages.error(request, "Preencha todos os campos corretamente.")
+            return redirect('alterar_sala', id=sala_obj.id)
+        
+        sala_obj.nome=nome_form
+        sala_obj.capacidade=capacidade_form
+        sala_obj.localizacao=localizacao_form
+        sala_obj.ocupada=ocupada_form
+        sala_obj.save()
+
+        return redirect('salas')
+    
+@login_required
+def excluir_sala(request, id):
+    if request.method == "POST":
+        sala_obj = Sala.objects.get(id=id)
+        sala_obj.delete()
+        return redirect('salas')
+    return redirect('salas')

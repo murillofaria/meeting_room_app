@@ -9,5 +9,8 @@ urlpatterns = [
     path('reunioes/criar', views.criar_reuniao, name="criar_reuniao"),
     path('reunioes/alterar/<int:id>', views.alterar_reuniao, name="alterar_reuniao"),
     path('reuniao/excluir/<int:id>', views.excluir_reuniao, name="excluir_reuniao"),
-    path('sala/criar', views.criar_sala, name="criar_sala")
+    path('sala/criar', views.criar_sala, name="criar_sala"),
+    path('salas/', views.salas, name='salas'),
+    path('sala/alterar/<int:id>', views.alterar_sala, name="alterar_sala"),
+    path('sala/excluir/<int:id>', views.excluir_sala, name="excluir_sala")
 ]

@@ -6,37 +6,137 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reuniões</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body class="bg-light">
-    <div class="container vh-100">
-        <div class="d-flex justify-content-between pt-5">
-            <div class="mb-5">
-                <h2>Olá, {{user.first_name}}!</h2>
-                <p>Abaixo está um resumo das suas reuniões.</p>
+    <div class="container vh-100 d-flex flex-column gap-5">
+        <div class="d-flex justify-content-between align-items-center p-4 shadow rounded-4 border-light" style="background-color: #eff6ff">
+            <div>
+                <h2 class="text-dark">Olá, <span class="fw-bold">{% if user.first_name %}{{user.first_name}}{%else%}{{user.username}}{% endif %}</span> <i class="bi bi-emoji-laughing-fill"></i> </h2>
+                <p class="text-muted mb-0">
+                    <i class="bi bi-calendar-check me-1"></i>Aqui está um resumo das suas reuniões.
+                </p>
             </div>
             <div>
-                <form action="{% url "logout" %}" method="POST">
+                <form action="{% url "logout" %}" method="POST" class="m-0">
                 {% csrf_token %}
-                <button class="btn btn-danger">Sair</button>
+                <button class="btn btn-danger">
+                    <span>Sair</span>
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
                 </form>
             </div>
         </div>
         <div class="d-flex justify-content-center align-items-center">
-            <div class="p-3 text-center">
-                <h5>{{ total_agendadas }}</h5>
-                <h4>Agendadas</h4>
+            <div class="card mx-3 shadow-sm border-0 border-start border-warning border-4" style="width: 180px">
+                <div class="card-body text-center">
+                    <h2 class="fw-bold mb-0">{{ contexto.reunioes_hoje.count }}</h2>
+                    <small class="text-uppercase fw-semibold text-muted">Reuniões Hoje</small>
+                </div>
             </div>
-            <div class="p-3 text-center">
-                <h5>{{ participando.count }}</h5>
-                <h4>Participando</h4>
+            <div class="card mx-3 shadow-sm border-0 border-start border-secondary border-4" style="width: 180px">
+                <div class="card-body text-center">
+                    <h2 class="fw-bold mb-0">{{ contexto.organizando.count }}</h2>
+                    <small class="text-uppercase fw-semibold text-muted">Organizando</small>
+                </div>
             </div>
-            <div class="p-3 text-center">
-                <h5>{{ total_salas }}</h5>
-                <h4>Salas Disponíveis</h4>
+            <div class="card mx-3 shadow-sm border-0 border-start border-info border-4" style="width: 180px">
+                <div class="card-body text-center">
+                    <h2 class="fw-bold mb-0">{{ contexto.participando.count }}</h2>
+                    <small class="text-uppercase fw-semibold text-muted">Participando</small>
+                </div>
             </div>
-            <div class="p-3 text-center">
-                <h5>{{ reunioes_hoje.count }}</h5>
-                <h4>Reuniões Hoje</h4>
+            <div class="card mx-3 shadow-sm border-0 border-start border-success border-4" style="width: 180px">
+                <div class="card-body text-center">
+                    <h2 class="fw-bold mb-0">{{ contexto.total_salas }}</h2>
+                    <small class="text-uppercase fw-semibold text-muted">Salas Disponíveis</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center my-4">
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <a href="{% url 'criar_reuniao' %}" class="btn btn-dark btn-lg w-100 py-3 shadow-sm d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-calendar-plus"></i>
+                    <span class="fw-bold">Nova Reunião</span>
+                </a>
+            </div>
+
+            <div class="col-sm-6 col-md-4 col-lg-3">
+                <a href="#" class="btn btn-dark btn-lg w-100 py-3 shadow-sm d-flex flex-column align-items-center justify-content-center">
+                    <i class="bi bi-door-open"></i>
+                    <span class="fw-bold">Registrar Sala</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 border-end">
+                <div class="d-flex align-items-center justify-content-center mb-4 pb-2 border-bottom">
+                    <h4 class="fw-bold text-dark d-flex align-items-center">
+                        <i class="bi bi-person-workspace me-2"></i> Minhas Reuniões (Organizador)
+                    </h4>
+                </div>
+
+                {% for reuniao in reunioes %}
+                    {% if reuniao.organizador_id == user.id %} <!--Se o id do usuário logado for igual o id do organizador da reunião, então ele é o próprio organizador-->
+                        <div class="card border-primary shadow-sm mb-3">
+                            <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #3b82f6">
+                                <strong>{{ reuniao.titulo }}</strong>
+                                <a href="{% url 'alterar_reuniao' reuniao.id %}" class="btn btn-dark btn-sm">Configurar</a>
+
+                                {% if messages %}
+                                    {% for mensagem in messages %}
+                                        {% if "success" in mensagem.tags and "reuniao_"|add:reuniao.id|stringformat:"s" in mensagem.tags %}
+                                            <div class="alert alert-success m-2 py-2 px-3 rounded-3 shadow-sm d-flex align-items-center justify-content-between" role="alert">
+                                                <small class="fw-bold"><i class="bi bi-calendar-check-fill"></i> {{mensagem}}</small>
+                                                <button type="button" class="btn-close small" data-bs-dismiss="alert"></button>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+
+                            <ul class="list-group list-group-flush shadow-sm">
+                                <li class="list-group-item"><strong>Data: </strong>{{reuniao.data}}</li>
+                                <li class="list-group-item"><strong>Início: </strong>{{reuniao.hora_inicio}}</li>
+                                <li class="list-group-item">
+                                    <span class="badge text-{% if reuniao.status == 'agendada' %}bg-primary{% elif reuniao.status == 'em_andamento' %}bg-warning
+                                                            {% elif reuniao.status == 'concluida' %}bg-success{% else %}bg-danger{% endif %}"
+                                    >{{reuniao.get_status_display}}</span> <!--Método padrão para pegar o segundo valor de choices-->
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex align-items-center justify-content-center mb-4 pb-2 border-bottom">
+                    <h4 class="fw-bold text-dark d-flex align-items-center">
+                        <i class="bi bi-people-fill me-2"></i> Minhas Reuniões (Participante)
+                    </h4>
+                </div>
+
+                {% for reuniao in reunioes %}
+                    {% if reuniao.participantes.user_id == user_id %} <!--Se o id do usuário logado for diferente do id do organizador da reunião, então ele é participante-->
+                        <div class="card border-primary shadow-sm mb-3">
+                            <div class="card-header text-white d-flex justify-content-between align-items-center" style="background-color: #3b82f6">
+                                <strong>{{ reuniao.titulo }}</strong>
+                                <a href="{% url 'alterar_reuniao' reuniao.id %}" class="btn btn-dark btn-sm">Configurar</a>
+                            </div>
+                        
+                            <ul class="list-group list-group-flush shadow-sm">
+                                <li class="list-group-item"><strong>Data: </strong>{{reuniao.data}}</li>
+                                <li class="list-group-item"><strong>Início: </strong>{{reuniao.hora_inicio}}</li>
+                                <li class="list-group-item">
+                                    <span class="badge text-{% if reuniao.status == 'agendada' %}bg-primary{% elif reuniao.status == 'em_andamento' %}bg-warning
+                                                            {% elif reuniao.status == 'concluida' %}bg-success{% else %}bg-danger{% endif %}"
+                                    >{{reuniao.get_status_display}}</span> <!--Método padrão para pegar o segundo valor de choices-->
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
     </div>

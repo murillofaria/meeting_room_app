@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reunião</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+
+        <div class="row shadow-lg rounded-4 border-light p-4" style="background-color: #eff6ff">
+            <div class="col d-flex justify-content-between">
+            <h2 class="fw-bold text-dark mb-3">Reunião <i class="{% if reuniao_obj %}bi bi-gear-wide-connected{% else %}bi bi-info-square{% endif %}"></i></h2>
+
+            {% if reuniao_obj %}
+                <form action="{% url 'excluir_reuniao' reuniao_obj.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">
+                        <span class="fw-bold">Excluir</span>
+                        <i class="bi bi-trash-fill"></i>
+                    </button>
+                </form>
+            {% endif %}
+            </div>
+
+            <form action="{% if reuniao_obj %}{% url 'alterar_reuniao' reuniao_obj.id %}{%else%}{% url 'criar_reuniao' %}{%endif%}" method="POST">
+                {% csrf_token %}
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label">Título</label>
+                            <input value="{{reuniao_obj.titulo}}" type="text" class="form-control" name="titulo" id="titulo" placeholder="Digite o título da reunião">
+                        </div>
+                        <div class="mb-3">
+                            <label for="descricao" class="form-label">Descrição</label>
+                            <textarea value="{{reuniao_obj.descricao}}" class="form-control" name="descricao" id="descricao" rows="3" placeholder="Digite a descrição da reunião"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="organizador" class="form-label">Organizador</label>
+                            
+                            <select class="form-select" name="organizador" id="organizador">
+                                <option value="" selected disabled>Selecione um organizador</option>
+                                {% for usuario_organizador in usuarios %}
+                                    <option value="{{usuario_organizador.id}}"
+                                    {% if usuario_organizador == reuniao_obj.organizador %}selected{% endif %}> <!--Seleciona somente o organizador-->
+                                    
+                                    {{usuario_organizador.first_name|default:usuario_organizador.username}} <!--Caso não exista first_name, usa username-->
+
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="participantes" class="form-label">Participantes</label>
+
+                            <select class="form-select" name="participante" id="participantes" multiple> <!--multiple permite selecionar mais de um-->
+                                {% for usuario_participante in usuarios %}
+                                    <option value="{{usuario_participante.id}}" 
+                                    {% if usuario_participante in reuniao_obj.participantes.all %}selected{%endif%}> <!--Seleciona todos os participantes-->
+                                    
+                                    {{usuario_participante.first_name|default:usuario_participante.username}}
+
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <small class="text-muted">Segure Ctrl <i class="bi bi-keyboard"></i> para selecionar mais de um participante.</small>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="sala" class="form-label">Sala</label>
+                            <select class="form-select" name="sala" id="sala">
+                                <option value="" selected disabled>Selecione uma sala</option>
+                                {% for sala in salas %}
+                                    <option value="{{sala.id}}"
+                                    {% if sala == reuniao_obj.sala %}selected{%endif%}
+                                    >{{sala.nome}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="data" class="form-label">Data</label>
+                            <input value="{{reuniao_obj.data|date:'Y-m-d'}}" type="date" class="form-control" name='data' id="data">
+                        </div>
+                        <div class="mb-3">
+                            <label for="hora_inicio" class="form-label">Hora de Início</label>
+                            <input value="{{reuniao_obj.hora_inicio}}" type="time" class="form-control" name="hora_inicio" id="hora_inicio">
+                        </div>
+                        <div class="mb-3">
+                            <label for="hora_fim" class="form-label">Hora de Fim</label>
+                            <input value="{{reuniao_obj.hora_fim}}" type="time" class="form-control" name="hora_fim" id="hora_fim">
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-select" name="status" id="status">
+                                {% for valor, nome in reuniao_status %}
+                                    <option value="{{valor}}"
+                                    {% if valor == reuniao_obj.status %}selected{%endif%}
+                                    >{{nome}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                {% if messages %}
+                    {% for mensagem in messages %}
+                            <div class="alert alert-danger text-center" role="alert">
+                                {{mensagem}}
+                            </div>
+                    {% endfor %}
+                {% endif %}
+
+                <div class="row mt-4">
+                    <div class="col d-flex justify-content-end"> 
+                        <a href="{% url 'reunioes' %}" class= "btn btn-danger me-5">
+                            <span>Cancelar</span>
+                            <i class="bi bi-box-arrow-right"></i>
+                        </a>  
+                        <button type="submit" class="btn btn-dark px-5">Salvar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body>
+</html>

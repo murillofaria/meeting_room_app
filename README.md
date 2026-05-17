@@ -23,6 +23,7 @@
 ### ▶️ Instruções de uso
 
 <ol>
+  <li>git clone https://github.com/murillofaria/meeting_room_app.git</li>
   <li>Abra o terminal com <strong>CTRL + J</strong> e utilize o comando <strong>python manage.py runserver</strong> para iniciar a aplicação</li>
   <li>Segure o <strong>CTRL + Botão Esquerdo do Mouse</strong> e clique no http://127.0.0.1:8000/ que aparece em seu terminal na IDE ou digite manualmente no navegador</li>
   <li>Navegue nas rotas disponíveis da aplicação</li>

@@ -1,5 +1,9 @@
 ## Meeting Room App - Grupo 46
 
+### 🎥 Vídeo de apresentação
+
+https://github.com/user-attachments/assets/d8e7841c-a9ec-48a1-bd5d-8907f5a77996
+
 ### 🎯 Objetivo da aplicação
 <p>Ao cadastrar e logar com seu usuário, é possível registrar salas, configurá-las e criar reuniões, no intuito de gerenciar seus compromissos organizacionais e tornar sua vida mais fácil.</p>
 

@@ -1,14 +1,14 @@
-# Meeting Room App - Grupo 46
+## Meeting Room App - Grupo 46
 
-## 🎯 Objetivo da aplicação
+### 🎯 Objetivo da aplicação
 <p>Ao cadastrar e logar com seu usuário, é possível registrar salas, configurá-las e criar reuniões, no intuito de gerenciar seus compromissos organizacionais e tornar sua vida mais fácil.</p>
 
-## 🛠 Tecnologias utilizadas
+### 🛠 Tecnologias utilizadas
 <p><strong>FRONT-END:</strong> HTML, CSS</p>
 <p><strong>BACK-END:</strong> PYTHON</p>
 <p><strong>FRAMEWORKS:</strong> DJANGO E BOOTSTRAP.</p>
 
-## 📦 Instruções de instalação
+### 📦 Instruções de instalação
 
 <ol>
   <li>Instale o Python em canais oficiais <strong>( Ex: python.org )</strong></li>
@@ -20,7 +20,7 @@
   <li>Clone o repositório ou baixe o arquivo em sua máquina.</li>
 </ol>
 
-## ▶️ Instruções de uso
+### ▶️ Instruções de uso
 
 <ol>
   <li>Abra o terminal com <strong>CTRL + J</strong> e utilize o comando <strong>python manage.py runserver</strong> para iniciar a aplicação</li>
@@ -29,15 +29,15 @@
   <li>Utilize o comando <strong>CTRL + ENTER</strong> no terminal para fechar a aplicação.</li>
 </ol>
 
-## 🌐 Rotas disponíveis para navegação
+### 🌐 Rotas disponíveis para navegação
 
-### Não é necessário estar logado
+#### Não é necessário estar logado
 <ul>
   <li>http://127.0.0.1:8000/inicio/</li>
   <li>http://127.0.0.1:8000/inicio/cadastro</li>
 </ul>
 
-### É necessário estar logado
+#### É necessário estar logado
 <ul>
   <li>http://127.0.0.1:8000/reunioes/</li>
   <li>http://127.0.0.1:8000/reunioes/criar</li>
@@ -49,7 +49,7 @@
   <li>http://127.0.0.1:8000/salas/</li>
 </ul>
 
-## 👥 Integrantes - Grupo 46
+### 👥 Integrantes - Grupo 46
 
 <ul>
   <li>MURILLO OTÁVIO FARIA MONTEIRO</li>
